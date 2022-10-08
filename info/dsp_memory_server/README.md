@@ -29,6 +29,7 @@ devmem 0x20080 32 0x3CA03CA0 # SQ.nop SQ.nop
 Keep in mind that
  - 0x0 on ARM (DDR region) is mapped to 0xC0000000 in DSP code space, as we seen from rough disassembly of DSP FW in T32.
  - The bus endianness of ARM and DSP seems to be different. i.e. you'll need to reverse the endian manually before loading/getting code/data to/from DSP.
+
 Now we could stop/reset(restart) the DSP by writing registers, as documented [here](https://github.com/fxsheep/sprd-kernel-kyletd/blob/36b969d0fd0fcbd02fbc3b81a140b120f1a347e2/arch/arm/mach-sc8810/include/mach/globalregs.h#L212).
 
 Stop and reset DSP:
@@ -80,7 +81,7 @@ We could now:
  - write the address you wanna read by DSP: `devmem 0x70000000 32 0xc0020080`
  - read result (dword value of this address): `devmem 0x70000004`
 
-And it works! After letting DSP read 0xC0020080, it immediately returned `0x0A000A21`, which is the value of our program's first dword - this also proved the assumption that our platform is using combined DSP prog/date address space is (probably) correct.
+And it works! After letting DSP read 0xC0020080, it immediately returned `0x0A000A21`, which is the value of our program's first dword - this also proved the assumption that our platform is using combined DSP prog/data address space is (probably) correct.
 
 ## Why so many NOPs
-It's after some trial-and-failure did I realize that this DSP is indeed VLIW, where instruction synchornization isn't taken care by hardware at all, but should be taken care by compiler, via manual NOPs stuffing. Otherwise, the results could be messed up(i.e. an instruction being executed expects result from a former instruction that hasn't complete).
+It's after some trial-and-failure did I realize that this DSP is indeed VLIW, where instruction synchornization isn't taken care by hardware at all, but should be taken care by compiler, via manual NOPs stuffing. Otherwise, the results could be messed up(i.e. an instruction being executed expects result from a former instruction that hasn't completed).
