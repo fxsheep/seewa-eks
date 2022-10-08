@@ -1,0 +1,14 @@
+# Bruteforcing instructions and encodings with T32
+
+This is a bruteforce approach to find instructions and its corresponding machine code of the DSP from T32 software. The idea is to simply use T32 disassembler as a black box and disassemble every possible combination, then store them statically and code a lookup table based assembler, which just do the reverse. It is, however, infeasible because the ISA itself is VLIW and it's just way too inefficient to do so. Thus we divide the searching/reverse lookup process into two parts:
+
+## Bruteforcing instructions in 16bit searching space
+ - While the DSP is VLIW, it's most likely that a VLIW instruction is still a combination of several distinct instructions, but with some special bits set to let the scheduler dispatch them all at once. Based on the assumption that a modern DSP shouldn't have single-byte instructions, we start searching from 16bits(2-bytes).
+ - `asm_bruteforce_16.cmm` is a `cmm` script that disassembles from 0x0 to 0xFFFF and writes the result to `insn_16.txt`. Note that you don't need a license to run this script, just download the update package from their website and run it in demo mode, it will work as long as you do not touch its debugging/emulation features.
+ - After skimming through the results, we could see that plenty of instructions are 16bit, e.g `0x3CA0 SQ.nop`, however, 32bit insn. do exist, e.g. `undef 0xFFFF0000` shows that the disassembler is trying to recognize 32bit ones. There might also be longer ones, but it's currently out of our scope before we have more insights.
+
+## Bruteforcing instructions in 32bit searching space
+ - After discovering 16bit insn.s, we should theoretically possible to make a table of all 32bit insn.s as well, but I've run out of disk space and HDD speed would make reverse lookup process a pain.
+ - However, since there's pure 16bit length insn., the opcode identify part shouldn't exceed 16bit - which means that you should be able to find at least the opcode of desired 32bit insn. in `insn_16.txt`(they will actually be disassembled with `00 00` appended due to how we bruteforce). This narrows searching space down to 65536 because you have found the first 16bit part.
+ - `asm_bruteforce_32.cmm` is provided for doing the second part search. Set `&val0=` to the starting point of search, run the script, let it wrap-around 64k and hit the stop button. 
+ - e.g. to find an exact encoding of a 32bit insn. `SC.in{b} @0x4,r0`, we first lookup `SC.in` in `insn_16.txt` - `0x97B8` is `SC.in{b} @0x0,r0`, so we set `&val0=0x97B80000`, run the script till 64k outputs, then stop it, search `SC.in{b} @0x4,r0` in `insn_32.txt` - it's `0x97B80080`!
