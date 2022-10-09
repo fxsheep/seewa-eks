@@ -1,6 +1,6 @@
 # DSP Memory Server
 
-In this section, I'm writing a simple application that runs on the DSP, 'communicates' with ARM and reads arbitrary DSP address according to ARM's request and return the value as result. This is my first attempt to write an 'application' on the DSP, using instruction bruteforcing technique introduced in `t32_insn_bruteforce`. Since we have zero documentation about how these mnemonic means, this humble attempt is going to verify my guesses. In T32 we could see the DSP uses separate program/data space, so I'm also going to see how they're mapped in this platform with this program.
+In this section, I'm writing a simple application that runs on the DSP, 'communicates' with ARM and reads arbitrary DSP address according to ARM's request and return the value as result. This is my first attempt to write an 'application' on the DSP, using instruction bruteforcing technique introduced in `t32_insn_bruteforce`. Since we have zero documentation about what these mnemonic means, this humble attempt is going to verify my guesses. In T32 we could see the DSP uses separate program/data space, so I'm also going to see how they're mapped in this platform with this program.
 
 ## ARM-to-DSP access
 Before we are going to run programs on DSP, there's a shortcut in our platform that allows us to access (partial, starting from 0x0) address space of DSP from ARM, by setting some registers, as documented [here](https://github.com/fxsheep/sprd-kernel-kyletd/blob/36b969d0fd0fcbd02fbc3b81a140b120f1a347e2/arch/arm/mach-sc8810/include/mach/globalregs.h#L502) and [here](https://github.com/fxsheep/sprd-kernel-kyletd/blob/36b969d0fd0fcbd02fbc3b81a140b120f1a347e2/arch/arm/mach-sc8810/include/mach/globalregs.h#L249):
@@ -50,7 +50,7 @@ After a search I picked these, which looked friendly: (these namings doesn't dif
 0x0A21 SC.mov #0x4,r1 //well maybe
 0x5001 LS0.ld{dw} (r0),r0 //load a dword from address specified in r0, to r0 itself, yes?
 0x5001 LS0.ld{dw} (r0),r0
-0x5411 LS0.st{dw} r0,(r1) //load a dword from r0 to address specified in r1
+0x5411 LS0.st{dw} r0,(r1) //store a dword from r0 to address specified in r1
 0x9ABFF81F SQ.brr{t} 0xFFFFFFE0 // Should be BRanch Relative, because I didn't find any other candidate that looks like do that?
 //dunno what {t} means though...
 ```
