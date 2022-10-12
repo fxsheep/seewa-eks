@@ -1,4 +1,4 @@
-# DSP instruction encoding 
+# DSP instruction decoding 
 Discovering how instructions are encoded is fundamental to building a disassembler/assembler for the architecture. Unluckily, there's no information about this other than the huge lookup table we've created in [`t32_insn_bruteforce`](https://github.com/fxsheep/seewa-eks/tree/main/info/t32_insn_bruteforce), so we'll have to manually discover encodings from it.
 
 ## Instruction class
