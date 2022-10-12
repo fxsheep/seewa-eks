@@ -28,7 +28,7 @@ devmem 0x20080 32 0x3CA03CA0 # SQ.nop SQ.nop
 ```
 Keep in mind that
  - 0x0 on ARM (DDR region) is mapped to 0xC0000000 in DSP code space, as we seen from rough disassembly of DSP FW in T32.
- - The bus endianness of ARM and DSP seems to be different. i.e. you'll need to reverse the endian manually before loading/getting code/data to/from DSP.
+ - The bus endianness of ARM and DSP seems to be different. **Update:Only code bus is different.** i.e. you'll need to reverse the endian manually before loading code to DSP.
 
 Now we could stop/reset(restart) the DSP by writing registers, as documented [here](https://github.com/fxsheep/sprd-kernel-kyletd/blob/36b969d0fd0fcbd02fbc3b81a140b120f1a347e2/arch/arm/mach-sc8810/include/mach/globalregs.h#L212).
 
