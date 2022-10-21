@@ -30,3 +30,22 @@ I've tried 4 and 5 leading bits as instruction opcode field, neither worked - op
 
 ```
 It seems that starting from `1000` the list looks quite messy, and my best bet is that the top bit either ~enables some more complicated VLIW encoding~ or indicates 32bit instrcutions.
+
+## 16bit instrcution encoding
+TODO
+
+## 32bit instruction encoding
+We've found that the 1st(leftmost) bit enables 32bit coding, what's next? Somehow I ran into this:
+```
+1001 9C800000 SQ.dint
+1011 BC800000 SQ.dint
+1101 DC8000000000 SQ.dint || SC.cmps{eq} r0,#0x0,prs0
+1111 FC8000000000 SQ.dint || SC.cmps{eq} r0,#0x0,prs0
+```
+It looks that the 2nd bit enables VLIW slot combining. So I tried the following:
+```
+DC8000003CA0 SQ.dint || SQ.nop
+DC800000DC8000000000 SQ.dint || SQ.dint || SC.cmps{eq} r0,#0x0,prs0
+```
+Indeed it does. By setting the 2nd bit, it tells the DSP to execute the next instruction in the same cycle as current one - combining them into a VLIW insn.
+
