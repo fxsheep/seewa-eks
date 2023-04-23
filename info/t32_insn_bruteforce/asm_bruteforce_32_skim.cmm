@@ -1,0 +1,28 @@
+SYStem.CPU CEVA-X1622
+SYStem.Up
+
+PRIVATE &filename
+
+AREA.Create REPORT
+AREA.CLEAR  REPORT
+AREA.view   REPORT
+
+&filename=OS.PPD()+"insn_32_skim.txt"
+
+AREA.OPEN REPORT &filename
+
+LOCAL &val0
+&val0=0x80000000
+LOOP:
+Data.Set P:0x0 %BE %Long &val0
+PRINT "&val0"+" "+DISASSEMBLE.ADDRESS(P:0)
+&val0=&val0+0x1000
+Var.IF &val0>=0xC0000000
+	GOTO STOP
+ELSE
+	GOTO LOOP
+
+STOP:
+AREA.CLOSE REPORT
+
+ENDDO

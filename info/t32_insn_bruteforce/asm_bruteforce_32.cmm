@@ -1,10 +1,13 @@
+SYStem.CPU CEVA-X1622
+SYStem.Up
+
 PRIVATE &filename
 
 AREA.Create REPORT
 AREA.CLEAR  REPORT
 AREA.view   REPORT
 
-&filename=OS.PPD()+"\insn_32.txt"
+&filename=OS.PPD()+"insn_32.txt"
 
 AREA.OPEN REPORT &filename
 
@@ -14,8 +17,12 @@ LOOP:
 Data.Set P:0x0 %BE %Long &val0
 PRINT "&val0"+" "+DISASSEMBLE.ADDRESS(P:0)
 &val0=&val0+1
-GOTO LOOP
+Var.IF &val0>0xFFFFFFFF
+	GOTO STOP
+ELSE
+	GOTO LOOP
 
+STOP:
 AREA.CLOSE REPORT
 
 ENDDO
