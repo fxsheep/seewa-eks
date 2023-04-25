@@ -13,3 +13,6 @@ This is a bruteforce approach to find instructions and its corresponding machine
  - `asm_bruteforce_32.cmm` is provided for doing the second part search. Set `&val0=` to the starting point of search, run the script, let it wrap-around 64k and hit the stop button. 
  - e.g. to find an exact encoding of a 32bit insn. `SC.in{b} @0x4,r0`, we first lookup `SC.in` in `insn_16.txt` - `0x97B8` is `SC.in{b} @0x0,r0`, so we set `&val0=0x97B80000`, run the script till 64k outputs, then stop it, search `SC.in{b} @0x4,r0` in `insn_32.txt` - it's `0x97B80080`!
  - Based on new progress made in [`insn_decoding`](https://github.com/fxsheep/seewa-eks/tree/main/info/insn_decoding), `asm_bruteforce_32_skim.cmm` is written, which enumerates from 0x80000000 to 0xC0000000 at a 0x1000 step, in the hope that it covers as much 32bit opcodes as possible and without VLIW combinations.  `insn_32_skim.txt` is the result of this script. This hopefully breaks the searching task down into a smaller granularity without compromising much on disk space.
+ - `asm_bruteforce_32_skim_0x100.cmm` does the same as above but with a 0x100 step. `insn_32_0x100.txt.xz` is the result compressed in xz. The decompressed form takes around 160MB space, so it's suggested to work with `xz -d -c insn_32_0x100.txt.xz | grep <insn>` directly.
+
+
