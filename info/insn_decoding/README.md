@@ -49,3 +49,16 @@ DC800000DC8000000000 SQ.dint || SQ.dint || SC.cmps{eq} r0,#0x0,prs0
 ```
 Indeed it does. By setting the 2nd bit, it tells the DSP to execute the next instruction in the same cycle as current one - combining them into a VLIW insn.
 
+## Encoding visualization
+`insn_visualier.py` and `insn_visualier_32b.py` are simple visualization scripts:
+
+![16bit-1](./16bit-1.png)
+
+![16bit-2](./16bit-2.png)
+
+![32bit-1](./32bit-1.png)
+
+By ticking a checkbox, a corresponding bit (ordered in high to low) will be set to 1, then a 16(or 32) bit machine code is formed and the corresponding disassembly is displayed. By toggling instruction bits, the difference in disassembly is apparantly shown, allowing easy decoding of machine code format.
+
+ - Note that due to space constraints, the 32bit visualizer is based on the dataset `insn_32_0x100.txt.xz`, thus the most 2 bits are always `10`, least 8 bits are always set to 0, regardless of selected value.
+ - Due to inline decompression, the 32bit visualizer can be significantly slower.
